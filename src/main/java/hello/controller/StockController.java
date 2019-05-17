@@ -29,10 +29,6 @@ public class StockController {
     List<String> stockReq;
     
     public StockController() {
-//    	stock = new ArrayList<>(Arrays.asList(
-//                new Stock("GOOGL", 128.00),
-//                new Stock("FB", 192.00)
-//        		));
     	stock = new ArrayList<>();
     	stockReq = new ArrayList<>();
     	stockReq.add("aapl");
@@ -96,14 +92,18 @@ public class StockController {
 		String inline;
 		
 		//Make URL 
+		//------------------------------------------------------------	
 		urlStr = new StringBuilder();
 		urlStr.append("https://api.iextrading.com/1.0/stock/");
 		urlStr.append(stockName);
 		urlStr.append("/batch?types=quote,news,chart&range=1m&last=10");
 		
+		
 		try {
 			url = new URL(urlStr.toString());
 			
+			//Call Rest Ful Api
+			//------------------------------------------------------------	
 			conn = (HttpURLConnection)url.openConnection();
 			conn.setRequestMethod("GET");
 			int responsecode = conn.getResponseCode();
@@ -113,6 +113,8 @@ public class StockController {
 				throw new RuntimeException("HttpResponseCode: " +responsecode);
 			}
 			
+			//Sprit Line
+			//------------------------------------------------------------	
 			inline = "";
 			sc = new Scanner(url.openStream());
 			while(sc.hasNext())
