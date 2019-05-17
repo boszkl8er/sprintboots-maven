@@ -2,29 +2,23 @@ package hello;
 
 public class Stock {
 
-    private final long id;
     private final String stock;
-	private String price;
+	private Double price;
 
-    public Stock(long id, String stock) {
-        this.id = id;
+    public Stock(String stock, Double price) {
         this.stock = stock;
 		this.price = price;
-    }
-
-    public long getId() {
-        return id;
     }
 
     public String getStock() {
         return stock;
     }
 	
-	public String getPrice(){
+	public Double getPrice(){
 		return price;
 	}
 	
-	public void setPrice(String price){
+	public void setPrice(Double price){
 		this.price = price;
 	}
 }

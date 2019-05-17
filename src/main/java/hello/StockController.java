@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,77 +23,137 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StockController {
 
-    //private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
 
-    @RequestMapping("/stock")
-    public Stock stock(@RequestParam(value="price", defaultValue="0") String name) {
-        return new Stock(counter.incrementAndGet(),
-                            String.format(name));
+    private final AtomicLong counter = new AtomicLong();
+    List<Stock> stock;
+    List<String> stockReq;
+    
+    public StockController() {
+//    	stock = new ArrayList<>(Arrays.asList(
+//                new Stock("GOOGL", 128.00),
+//                new Stock("FB", 192.00)
+//        		));
+    	stock = new ArrayList<>();
+    	stockReq = new ArrayList<>();
+    	stockReq.add("aapl");
+    	stockReq.add("fb");
+    	stockReq.add("googl");
+    	stockReq.add("msft");
+    	
     }
+
+    
+  @RequestMapping("/stock")
+  public List<Stock> getAllStock() {
+	  
+	  stock = new ArrayList<>();
+	  String stockName = "";
+	  for(int i = 0; i < stockReq.size(); i++) {
+		  stockName = stockReq.get(i);
+		  stock.add(new Stock(stockName, getPriceOfStock(stockName)));
+	  }
+      return stock;
+  }
+  
+  @RequestMapping("/stock/apple")
+  public List<Stock> getAppleStock(){
+	  stock = new ArrayList<>();
+	  stock.add(new Stock("appl", getPriceOfStock("appl")));
+	  
+	  return stock;
+  }
+  
+  @RequestMapping("/stock/facebook")
+  public List<Stock> getFacebookStock(){
+	  stock = new ArrayList<>();
+	  stock.add(new Stock("fb", getPriceOfStock("fb")));
+	  
+	  return stock;
+  }
+  
+  @RequestMapping("/stock/google")
+  public List<Stock> getGoogleStock(){
+	  stock = new ArrayList<>();
+	  stock.add(new Stock("googl", getPriceOfStock("googl")));
+	  
+	  return stock;
+  }
 	
-	@SuppressWarnings("deprecation")
-	@RequestMapping("/debug")
-	public void testDebug(){
-		System.out.println("==============================================");
-		System.out.println("Test Console printing");
+	public Double getPriceOfStock(String stockName){
+		
+		//Initial variable
+		//------------------------------------------------------------	
+		StringBuilder urlStr;
+		URL url;
+		HttpURLConnection conn;
+		JSONParser parse;
+		JSONObject jsonObj;
+		JSONObject quoteObj;
+		
+		String symbol;
+		Double lastestPrice = 0.0;
+		Scanner sc;
+		String inline;
+		
+		//Make URL 
+		urlStr = new StringBuilder();
+		urlStr.append("https://api.iextrading.com/1.0/stock/");
+		urlStr.append(stockName);
+		urlStr.append("/batch?types=quote,news,chart&range=1m&last=10");
 		
 		try {
-			URL url = new URL("https://api.iextrading.com/1.0/stock/aapl/batch?types=quote,news,chart&range=1m&last=10");
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			url = new URL(urlStr.toString());
+			
+			conn = (HttpURLConnection)url.openConnection();
 			conn.setRequestMethod("GET");
 			int responsecode = conn.getResponseCode();
-			System.out.println("responsecode : " + responsecode);
 			
 			//Error
 			if(responsecode != 200) {
 				throw new RuntimeException("HttpResponseCode: " +responsecode);
 			}
 			
-			String inline = "";
-			Scanner sc = new Scanner(url.openStream());
+			inline = "";
+			sc = new Scanner(url.openStream());
 			while(sc.hasNext())
 			{
-			inline+=sc.nextLine();
+				inline+=sc.nextLine();
 			}
-//			System.out.println("\nJSON data in string format");
-//			System.out.println(inline);
 			sc.close();
 			
 			//Convert String to JSON
 			//---------------------------------------------------------------
-			
-			
-			JSONParser parse = new JSONParser(); 
+			parse = new JSONParser(); 
 			try {
-				JSONObject jsonObj = (JSONObject)parse.parse(inline); 
-//				System.out.println("==========================================");
-//				System.out.println("String Quote : " + jsonObj);
-				
+				jsonObj = (JSONObject)parse.parse(inline); 
+				quoteObj = (JSONObject)jsonObj.get("quote");
 
-				//JSONObject jsonobj_1 = (JSONObject)jsonarr_1.get(i);
-				JSONObject quoteObj = (JSONObject)jsonObj.get("quote");
-				System.out.println("==========================================");
-				System.out.println("String Quote : " + quoteObj);
-				
-				String symbol = (String)quoteObj.get("symbol");
-				Double lastestPrice = (Double)quoteObj.get("latestPrice");
-				
-				System.out.println("-------------------------------------------");
-				System.out.println("Symbol : " + symbol);
-				System.out.println("lastest price : " + lastestPrice);
-				
+				symbol = (String)quoteObj.get("symbol");
+				lastestPrice = (Double)quoteObj.get("latestPrice");
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return lastestPrice;
 			} 
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return lastestPrice;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return lastestPrice;
 		}
+	
+		return lastestPrice;
+	}
+	
+	public void setStock(List<Stock> stock) {
+		this.stock = stock;
+	}
+	
+	public List<Stock> getStock() {
+		return this.stock;
 	}
 }
