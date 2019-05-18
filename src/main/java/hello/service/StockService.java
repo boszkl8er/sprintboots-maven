@@ -1,26 +1,25 @@
-
 package hello.service;
-
-import java.util.List;
-
+import hello.entities.Stock;
+import hello.repositories.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 @Service
 public class StockService {
 
-//	@Autowired
-//	private StockRepository stockRepository;
-//	
-//	public List<Stock> getAllCosmetics(){
-//			return cosmeticRepository.findAll();
-//	}
-//
-//	public void addCosmetic(Stock cosmetic){
-//		cosmeticRepository.save(cosmetic);
-//	}
-//
-//	public void deleteCosmetic(String id) {
-//		cosmeticRepository.deleteById(id);
-//	}
+	@Autowired
+	private static StockRepository stockRepository;
+	
+	public static List<Stock> getAllStock(){
+			return stockRepository.findAll();
+	}
+
+	public static void addStock(Stock stock){
+		stockRepository.save(stock);
+	}
+
+	public static void deleteStock(String id) {
+		stockRepository.deleteById(id);
+	}
 }

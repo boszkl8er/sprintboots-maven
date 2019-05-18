@@ -1,5 +1,7 @@
 package hello.controller;
-import hello.entities.*;
+import hello.entities.Stock;
+import hello.service.StockService;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -16,7 +18,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,9 +49,32 @@ public class StockController {
     	System.out.println("===========================================================");
     }
     
+    @RequestMapping(value = "/insert/all/stock", method=RequestMethod.POST)
+    public void addCosmetic(@RequestBody Stock insertStock) {
+    	System.out.println("--------------------------------------------");
+    	System.out.println(" Call Method addAllStock");
+    	System.out.println("--------------------------------------------");
+    	
+//    	this.stock = getAllStock();
+//    	System.out.println("stock : " + stock);
+    	
+    	StockService.addStock(insertStock);
+//    	for(int i = 0; i < stock.size(); i++) {
+//    		StockService.addStock(stock.get(i));
+//    	}
+    }
+    
+    @RequestMapping("/select/all/stock")
+    public List<Stock> getAllDBStock(){
+    	return StockService.getAllStock();
+    }
+    
+    public void addStock(Stock stock) {
+       StockService.addStock(stock);
+    }
+    
   @RequestMapping("/stock")
   public List<Stock> getAllStock() {
-	  
 	  stock = new ArrayList<>();
 	  String stockName = "";
 	  for(int i = 0; i < stockReq.size(); i++) {
@@ -103,8 +130,6 @@ public class StockController {
 		urlStr.append("https://api.iextrading.com/1.0/stock/");
 		urlStr.append(stockName);
 		urlStr.append("/batch?types=quote,news,chart&range=1m&last=10");
-		
-		System.out.println("URL : " + urlStr.toString());
 		try {
 			url = new URL(urlStr.toString());
 			
