@@ -11,15 +11,20 @@ public class StockService {
 	@Autowired
 	private static StockRepository stockRepository;
 	
-	public static List<Stock> getAllStock(){
+	public List<Stock> getAllStock(){
 			return stockRepository.findAll();
 	}
+	
+	public void addStock() {
+		Stock tempStock = new Stock("AKK",12.32);
+		stockRepository.save(tempStock);
+	}
 
-	public static void addStock(Stock stock){
+	public void addStock(Stock stock){
 		stockRepository.save(stock);
 	}
 
-	public static void deleteStock(String id) {
+	public void deleteStock(String id) {
 		stockRepository.deleteById(id);
 	}
 }

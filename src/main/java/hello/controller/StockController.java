@@ -7,27 +7,25 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class StockController {
 
-
+	@Autowired
+	StockService stockService;
+	
     private final AtomicLong counter = new AtomicLong();
     List<Stock> stock;
     List<String> stockReq;
@@ -50,7 +48,7 @@ public class StockController {
     }
     
     @RequestMapping(value = "/insert/all/stock", method=RequestMethod.POST)
-    public void addCosmetic(@RequestBody Stock insertStock) {
+    public void addStockDB(@RequestBody Stock stock) {
     	System.out.println("--------------------------------------------");
     	System.out.println(" Call Method addAllStock");
     	System.out.println("--------------------------------------------");
@@ -58,19 +56,30 @@ public class StockController {
 //    	this.stock = getAllStock();
 //    	System.out.println("stock : " + stock);
     	
-    	StockService.addStock(insertStock);
+    	stockService.addStock(stock);
 //    	for(int i = 0; i < stock.size(); i++) {
 //    		StockService.addStock(stock.get(i));
 //    	}
     }
     
+    @RequestMapping("/insert/stock")
+    public void addStockDB2() {
+    	System.out.println("--------------------------------------------");
+    	System.out.println(" Call Method addStockDB2");
+    	System.out.println("--------------------------------------------");
+    	
+    	Stock tempStock = new Stock("MK",63.23);
+    	stockService.addStock();
+    }
+     
+    
     @RequestMapping("/select/all/stock")
     public List<Stock> getAllDBStock(){
-    	return StockService.getAllStock();
+    	return stockService.getAllStock();
     }
     
     public void addStock(Stock stock) {
-       StockService.addStock(stock);
+    	stockService.addStock(stock);
     }
     
   @RequestMapping("/stock")
