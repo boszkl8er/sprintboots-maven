@@ -9,7 +9,7 @@ import java.util.List;
 public class StockService {
 
 	@Autowired
-	private static StockRepository stockRepository;
+	private StockRepository stockRepository;
 	
 	public List<Stock> getAllStock(){
 			return stockRepository.findAll();

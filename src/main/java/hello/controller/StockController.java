@@ -23,22 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StockController {
 
-	@Autowired
 	StockService stockService;
 	
-    private final AtomicLong counter = new AtomicLong();
-    List<Stock> stock;
-    List<String> stockReq;
-    
-    public StockController() {
-    	stock = new ArrayList<>();
-    	stockReq = new ArrayList<>();
-    	stockReq.add("aapl");
-    	stockReq.add("fb");
-    	stockReq.add("googl");
-    	stockReq.add("msft");
-    	
-    }
+	private final AtomicLong counter = new AtomicLong();
+	List<Stock> stock;
+	List<String> stockReq;
+	    
+	public StockController(StockService stockService) {
+		this.stockService = stockService;
+	    	stock = new ArrayList<>();
+	    	stockReq = new ArrayList<>();
+	    	stockReq.add("aapl");
+	    	stockReq.add("fb");
+	    	stockReq.add("googl");
+	    	stockReq.add("msft");	
+	}
     
     @RequestMapping("/test")
     public void testConnection() {
