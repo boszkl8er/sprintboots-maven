@@ -1,5 +1,5 @@
-package hello;
-
+package hello.controller;
+import hello.entities.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -37,7 +37,13 @@ public class StockController {
     	stockReq.add("msft");
     	
     }
-
+    
+    @RequestMapping("/test")
+    public void testConnection() {
+    	System.out.println("===========================================================");
+    	System.out.println("  Connection Successful !!                                 ");
+    	System.out.println("===========================================================");
+    }
     
   @RequestMapping("/stock")
   public List<Stock> getAllStock() {
@@ -54,7 +60,7 @@ public class StockController {
   @RequestMapping("/stock/apple")
   public List<Stock> getAppleStock(){
 	  stock = new ArrayList<>();
-	  stock.add(new Stock("appl", getPriceOfStock("appl")));
+	  stock.add(new Stock("aapl", getPriceOfStock("aapl")));
 	  
 	  return stock;
   }
@@ -98,7 +104,7 @@ public class StockController {
 		urlStr.append(stockName);
 		urlStr.append("/batch?types=quote,news,chart&range=1m&last=10");
 		
-		
+		System.out.println("URL : " + urlStr.toString());
 		try {
 			url = new URL(urlStr.toString());
 			
@@ -131,7 +137,13 @@ public class StockController {
 				quoteObj = (JSONObject)jsonObj.get("quote");
 
 				symbol = (String)quoteObj.get("symbol");
-				lastestPrice = (Double)quoteObj.get("latestPrice");
+			
+				try {
+					lastestPrice = (Double)quoteObj.get("latestPrice");
+				}catch(Exception e) {
+					Long temp = (Long)quoteObj.get("latestPrice");
+					lastestPrice = Double.valueOf(temp);
+				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
